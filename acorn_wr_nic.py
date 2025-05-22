@@ -80,25 +80,42 @@ class _CRG(LiteXModule):
         if with_white_rabbit:
             from gateware.tunning_mmcm import TunningMMCM
             self.cd_wr = ClockDomain("wr")
-            self.cd_clk200m = ClockDomain("clk200m")
-            self.comb += ClockSignal("clk200m").eq(pll.clkin)
+            self.cd_clk400m = ClockDomain("clk400m")
+            pll.create_clkout(self.cd_clk400m, 400e6)
 
             self.main_tunning_mmcm = TunningMMCM(
-                    cd_psclk = "clk200m",
+                    cd_psclk = "clk400m",
                     cd_sys = "wr",
+                    ctrl_size = 16,
+                    freq_ps = 400e6,
+                    div_n = 1,
+                    forced_vco_freq = 1.5e9,
                     )
             self.comb += self.main_tunning_mmcm.reset.eq(self.rst)
-            self.main_tunning_mmcm.register_clkin(ClockSignal("clk200m"), 200e6)
+            self.main_tunning_mmcm.register_clkin(ClockSignal("clk400m"), 400e6)
             self.main_tunning_mmcm.create_clkout(self.cd_clk_125m_gtp,  125e6, margin=0)
             self.comb += self.cd_refclk_eth.clk.eq(self.cd_clk_125m_gtp.clk)
 
             self.dmtd_tunning_mmcm = TunningMMCM(
-                    cd_psclk = "clk200m",
+                    cd_psclk = "clk400m",
                     cd_sys = "wr",
+                    freq_ps = 400e6,
+                    ctrl_size = 16,
+                    center_ratio = (2**14 - 1) / 2**14,
+                    div_n = 1,
+                    forced_vco_freq = 1.5e9,
                     )
             self.comb += self.dmtd_tunning_mmcm.reset.eq(self.rst)
-            self.dmtd_tunning_mmcm.register_clkin(ClockSignal("clk200m"), 200e6)
+            self.dmtd_tunning_mmcm.register_clkin(ClockSignal("clk400m"), 400e6)
             self.dmtd_tunning_mmcm.create_clkout(self.cd_clk_62m5_dmtd, 62.5e6, margin=0)
+
+            # Filter PLL -- probably useless
+            #self.cd_unfiltered_clk = ClockDomain()
+            #self.dmtd_tunning_mmcm.create_clkout(self.cd_unfiltered_clk, 200e6, margin=0)
+            #self.dmtd_filter_pll = S7PLL(speedgrade=-3)
+            #self.comb += self.dmtd_filter_pll.reset.eq(self.rst)
+            #self.dmtd_filter_pll.register_clkin(self.cd_unfiltered_clk.clk, 200e6)
+            #self.dmtd_filter_pll.create_clkout(self.cd_clk_62m5_dmtd, 62.5e6, margin=0)
         else:
             # RefClk Input (125MHz).
             # ----------------------
@@ -211,6 +228,7 @@ class BaseSoC(LiteXWRNICSoC):
             self.led_pps         = led_pps         = Signal()
             self.led_link        = led_link        = Signal()
             self.led_act         = led_act         = Signal()
+            self.clk_pll                           = Signal()
 
             # White Rabbit Fabric Interface.
             # ------------------------------
@@ -244,6 +262,7 @@ class BaseSoC(LiteXWRNICSoC):
                 p_g_dpram_size        = 131072//4,
                 p_txpolarity          = 0, # Inverted on Acorn and on baseboard.
                 p_rxpolarity          = 1, # Inverted on Acorn.
+                p_g_dac_bits          = 16,
 
                 # Clocks/resets.
                 i_areset_n_i          = ~ResetSignal("sys"),
@@ -364,7 +383,11 @@ class BaseSoC(LiteXWRNICSoC):
             ]
 
             self.comb += platform.request("debug", 0).eq(
-                    Cat(pps, 0, ClockSignal("wr"), 0)
+                    Cat(
+                        pps,
+                        self.clk_pll,
+                        ClockSignal("wr"),
+                        0)
                     )
 
             # White Rabbit Ethernet PHY (over White Rabbit Fabric) ---------------------------------

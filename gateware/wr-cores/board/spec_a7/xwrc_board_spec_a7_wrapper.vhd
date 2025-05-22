@@ -44,7 +44,8 @@ entity xwrc_board_spec_a7_wrapper is
     -- GTPE2_CHANNEL TX Polarity Control Ports
     txpolarity                  : bit := '0';
     -- GTPE2_CHANNEL RX Polarity Control Ports
-    rxpolarity                  : bit := '1'
+    rxpolarity                  : bit := '1';
+    g_dac_bits                  : integer              := 32
   );
   port (
     -- Clocks/resets
@@ -59,10 +60,10 @@ entity xwrc_board_spec_a7_wrapper is
 
     -- Serial DACs
     dac_refclk_load      : out std_logic;
-    dac_refclk_data      : out std_logic_vector(15 downto 0);
+    dac_refclk_data      : out std_logic_vector(g_dac_bits-1 downto 0);
 
     dac_dmtd_load        : out std_logic;
-    dac_dmtd_data        : out std_logic_vector(15 downto 0);
+    dac_dmtd_data        : out std_logic_vector(g_dac_bits-1 downto 0);
 
     -- SFP I/O for transceiver and SFP management info
     sfp_txp_o            : out std_logic;
@@ -245,7 +246,8 @@ begin
       g_diag_ro_size              => g_diag_ro_size,
       g_diag_rw_size              => g_diag_rw_size,
       txpolarity                  => txpolarity,
-      rxpolarity                  => rxpolarity
+      rxpolarity                  => rxpolarity,
+      g_dac_bits                  => g_dac_bits
     )
     port map (
       areset_n_i           => areset_n_i,

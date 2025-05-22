@@ -972,7 +972,11 @@ static int litepcie_phc_get_syncdevicetime(ktime_t *device,
 
 #if IS_ENABLED(CONFIG_X86_TSC) && !defined(CONFIG_UML)
 	/* Convert ART (Absolute Reference Time) to TSC (Time Stamp Counter) */
-	*system = convert_art_ns_to_tsc(ptm_master_time);
+	*system = (struct system_counterval_t) {
+		.cs_id		= CSID_X86_ART,
+		.cycles		= ptm_master_time,
+		.use_nsecs	= true,
+	};
 #else
     *system = (struct system_counterval_t) { };
 #endif
