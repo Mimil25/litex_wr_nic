@@ -77,21 +77,3 @@ class TunningMMCM(S7MMCM):
         sync_ps += self.acc.eq(self.acc + self.scaled_cmd_psclk)
         sync_ps += self.acc_old.eq(self.acc)
         sync_ps += self.psen.eq(self.acc_old > self.acc)
-
-        """
-        self.ps_gen = Instance(
-                'ps_gen',
-                p_WIDTH = ctrl_size,
-                p_DIV = 16,
-                p_MULT = 7,
-
-                i_pswidth = self.ctrl_data,
-                i_pswidth_set = self.ctrl_load,
-                i_pswidth_clk = ClockSignal(cd_sys),
-
-                i_psclk = ClockSignal(cd_psclk),
-                i_psdone = self.psdone,
-                o_psen = self.psen,
-                o_psincdec = self.psincdec,
-                )
-        """
