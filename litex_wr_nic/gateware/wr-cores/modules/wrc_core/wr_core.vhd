@@ -125,8 +125,8 @@ entity wr_core is
     clk_ext_i : in std_logic := '0';
 
     -- LockSweep signals
-    --lock_sweep_i         : in std_logic := '0';
-    --lock_sweep_phase_i   : in std_logic_vector(15 downto 0) := (others => '0');
+    lock_sweep_i         : in std_logic := '0';
+    lock_sweep_phase_i   : in std_logic_vector(15 downto 0) := (others => '0');
 
     -- External PPS input (cesium, GPSDO, etc.), used in Grandmaster mode
     pps_ext_i : in std_logic := '0';
@@ -553,8 +553,8 @@ begin
       pps_p_o              => pps_p_o,
       pps_led_o            => pps_led_o,
 
-      --lock_sweep_i       => lock_sweep_i,
-      --lock_sweep_phase_i => lock_sweep_phase_i,
+      lock_sweep_i       => lock_sweep_i,
+      lock_sweep_phase_i => lock_sweep_phase_i,
 
       aux_timing_serdes_locked_i  => aux_timing_serdes_locked_i,
 

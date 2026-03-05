@@ -21,10 +21,10 @@ TOOLCHAIN_URL     = "https://gitlab.com/ohwr/project/wrpc-sw/-/wikis/uploads/9f9
 TOOLCHAIN_ARCHIVE = "riscv-11.2-small.tgz"
 TOOLCHAIN_DIR     = "riscv-11.2-small"
 
-REPO_URL          = "https://gitlab.com/ohwr/project/wrpc-sw.git"
+REPO_URL          = "git@github.com:Mimil25/wrpc-sw.git"
 CLONE_DIR         = "wrpc-sw"
 
-COMMIT_HASH       = "baf7749610b2880bf243b38a9a1608af8e0e688d"
+COMMIT_HASH       = "auxpll_locksweep_10M"
 CONFIG_SRC        = "spec_a7_defconfig"
 
 FIRMWARE_SRC      = os.path.join(CLONE_DIR, "wrc.bram")
@@ -70,13 +70,13 @@ def clone_repository():
 def checkout_commit(target="spec_a7"):
     """Checkout the specific commit in the repository."""
     # Ensure no kp/ki modifications.
-    run_command(f"git checkout softpll/spll_main.c", cwd=CLONE_DIR)
+    #run_command(f"git checkout softpll/spll_main.c", cwd=CLONE_DIR)
     run_command(f"git checkout {COMMIT_HASH}", cwd=CLONE_DIR)
 
     # For Acorn: adapts kp/ki.
-    if target != "spec_a7":
-        tools.replace_in_file(f"{CLONE_DIR}/softpll/spll_main.c", "s->pi.kp = -1100;", "s->pi.kp = -150;")
-        tools.replace_in_file(f"{CLONE_DIR}/softpll/spll_main.c", "s->pi.ki = -30;", "s->pi.ki = -2;")
+    #if target != "spec_a7":
+    #    tools.replace_in_file(f"{CLONE_DIR}/softpll/spll_main.c", "s->pi.kp = -1100;", "s->pi.kp = -150;")
+    #    tools.replace_in_file(f"{CLONE_DIR}/softpll/spll_main.c", "s->pi.ki = -30;", "s->pi.ki = -2;")
 
 def copy_config_file():
     """Copy the configuration file to the repository."""

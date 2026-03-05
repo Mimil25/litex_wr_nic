@@ -14,7 +14,7 @@ from litex.build import tools
 
 WR_CORES_URL    = "https://gitlab.com/ohwr/project/wr-cores.git"
 WR_CORES_BRANCH = "master"
-WR_CORES_SHA1   = "c3f828881f5fd496966f1f04723dc85992d526fa"
+WR_CORES_SHA1   = "1709e35fa1dd7f02531243a2d3e21bd7ec01b050"
 WR_SUBSYSTEM_VHD = "wr-cores/modules/wrc_core/xwr_subsystem.vhd"
 
 def wr_core_init():
