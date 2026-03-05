@@ -25,10 +25,10 @@ REPO_URL          = "git@github.com:Mimil25/wrpc-sw.git"
 CLONE_DIR         = "wrpc-sw"
 
 COMMIT_HASH       = "auxpll_locksweep_10M"
-CONFIG_SRC        = "spec_a7_defconfig"
+CONFIG_SRC        = "m2sdr_defconfig"
 
 FIRMWARE_SRC      = os.path.join(CLONE_DIR, "wrc.bram")
-FIRMWARE_DEST     = "spec_a7_wrc.bram"
+FIRMWARE_DEST     = "m2sdr_wrc.bram"
 
 SDBFS_DEST        = "sdb-wrpc.bin"
 SDBFS_SRC         = "sdbfs"
@@ -80,7 +80,7 @@ def checkout_commit(target="spec_a7"):
 
 def copy_config_file():
     """Copy the configuration file to the repository."""
-    config_dest = os.path.join(CLONE_DIR, "configs/spec_a7_defconfig")
+    config_dest = os.path.join(CLONE_DIR, f"configs/{CONFIG_SRC}")
     if not os.path.exists(CONFIG_SRC):
         print(f"Error: Configuration file {CONFIG_SRC} does not exist.")
         exit(1)
@@ -88,7 +88,7 @@ def copy_config_file():
 
 def build_firmware():
     """Build the firmware."""
-    run_command("make spec_a7_defconfig", cwd=CLONE_DIR)
+    run_command(f"make {CONFIG_SRC}", cwd=CLONE_DIR)
     run_command("make", cwd=CLONE_DIR)
 
 def copy_firmware():
@@ -119,7 +119,7 @@ def build_sdbfs():
 
 def main():
     parser = argparse.ArgumentParser(description="LiteX-WR-NIC on Acorn Baseboard Mini.")
-    parser.add_argument("--target", default="spec_a7", help="Target Board.", choices=["spec_a7", "acorn"])
+    parser.add_argument("--target", default="spec_a7", help="Target Board.", choices=["spec_a7", "acorn", "m2sdr"])
     args = parser.parse_args()
 
     init_riscv_toolchain()
