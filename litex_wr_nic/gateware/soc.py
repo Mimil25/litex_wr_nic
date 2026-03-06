@@ -676,8 +676,8 @@ class LiteXWRNICSoC(SoCMini):
                 )
         if lock_sweep_phase is not None:
             self.wr_params.update(
-                    i_lock_sweep_i     = lock_sweep,
-                    i_lock_sweep_phase_i = lock_sweep,
+                    i_lock_sweep_i       = lock_sweep,
+                    i_lock_sweep_phase_i = lock_sweep_phase,
                     )
 
     def do_finalize(self):
