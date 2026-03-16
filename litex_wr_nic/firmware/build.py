@@ -25,10 +25,8 @@ REPO_URL          = "git@github.com:Mimil25/wrpc-sw.git"
 CLONE_DIR         = "wrpc-sw"
 
 COMMIT_HASH       = "auxpll_locksweep_10M"
-CONFIG_SRC        = "m2sdr_defconfig"
 
 FIRMWARE_SRC      = os.path.join(CLONE_DIR, "wrc.bram")
-FIRMWARE_DEST     = "m2sdr_wrc.bram"
 
 SDBFS_DEST        = "sdb-wrpc.bin"
 SDBFS_SRC         = "sdbfs"
@@ -78,25 +76,25 @@ def checkout_commit(target="spec_a7"):
     #    tools.replace_in_file(f"{CLONE_DIR}/softpll/spll_main.c", "s->pi.kp = -1100;", "s->pi.kp = -150;")
     #    tools.replace_in_file(f"{CLONE_DIR}/softpll/spll_main.c", "s->pi.ki = -30;", "s->pi.ki = -2;")
 
-def copy_config_file():
+def copy_config_file(target):
     """Copy the configuration file to the repository."""
-    config_dest = os.path.join(CLONE_DIR, f"configs/{CONFIG_SRC}")
-    if not os.path.exists(CONFIG_SRC):
-        print(f"Error: Configuration file {CONFIG_SRC} does not exist.")
+    config_dest = os.path.join(CLONE_DIR, f"configs/{target}_defconfig")
+    if not os.path.exists(f"{target}_defconfig"):
+        print(f"Error: Configuration file {target}_defconfig does not exist.")
         exit(1)
-    shutil.copy(CONFIG_SRC, config_dest)
+    shutil.copy(f"{target}_defconfig", config_dest)
 
-def build_firmware():
+def build_firmware(target):
     """Build the firmware."""
-    run_command(f"make {CONFIG_SRC}", cwd=CLONE_DIR)
+    run_command(f"make {target}_defconfig", cwd=CLONE_DIR)
     run_command("make", cwd=CLONE_DIR)
 
-def copy_firmware():
+def copy_firmware(target):
     """Copy the resulting firmware to the destination."""
     if not os.path.exists(FIRMWARE_SRC):
         print(f"Error: Firmware file {FIRMWARE_SRC} does not exist.")
         exit(1)
-    shutil.copy(FIRMWARE_SRC, FIRMWARE_DEST)
+    shutil.copy(FIRMWARE_SRC, f"{target}_wrc.bram")
 
 def build_sdbfs():
     """Build the SDB filesystem."""
@@ -126,9 +124,9 @@ def main():
     check_riscv_toolchain()
     clone_repository()
     checkout_commit(args.target)
-    copy_config_file()
-    build_firmware()
-    copy_firmware()
+    copy_config_file(args.target)
+    build_firmware(args.target)
+    copy_firmware(args.target)
     build_sdbfs()
     print("Build process completed successfully.")
 
