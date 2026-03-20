@@ -648,8 +648,7 @@ class LiteXWRNICSoC(SoCMini):
                       dac_aux_data,
                       lock_en=True,
                       locked=None,
-                      lock_sweep = None, # only one auxpll can use locksweep for now
-                      lock_sweep_phase = None
+                      lock_sweep_phase = None # only one auxpll can use locksweep for now
                       ):
         i = 0 # aux clk index
         if 'p_g_aux_clk' in self.wr_params.keys():
@@ -676,8 +675,7 @@ class LiteXWRNICSoC(SoCMini):
                 )
         if lock_sweep_phase is not None:
             self.wr_params.update(
-                    i_lock_sweep_i       = lock_sweep,
-                    i_lock_sweep_phase_i = lock_sweep_phase,
+                    i_tm_clk_aux_locksweep_phase_i = lock_sweep_phase,
                     )
 
     def do_finalize(self):

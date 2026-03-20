@@ -198,6 +198,9 @@ entity xwrc_board_litex_wr_nic is
     tm_clk_aux_lock_en_i : in  std_logic_vector(g_aux_clks-1 downto 0) := (others => '0');
     tm_clk_aux_locked_o  : out std_logic_vector(g_aux_clks-1 downto 0);
     clk_aux_i            : in  std_logic_vector(g_aux_clks-1 downto 0) := (others => '0'); -- aux clks feedback
+    -- Aux clock locksweep (only one auxiliary pll can use locksweep for now, to use more you must add wishbone ports
+    tm_clk_aux_locksweep_phase_i : in std_logic_vector(15 downto 0) := (others => '0');
+    
     -- LockSweep signals
     lock_sweep_i         : in std_logic := '0';
     lock_sweep_phase_i   : in std_logic_vector(15 downto 0) := (others => '0');
@@ -481,6 +484,7 @@ begin  -- architecture struct
       tm_dac_wr_o          => tm_dac_wr_o,
       tm_clk_aux_lock_en_i => tm_clk_aux_lock_en_i,
       tm_clk_aux_locked_o  => tm_clk_aux_locked_o,
+      tm_clk_aux_locksweep_phase_i => tm_clk_aux_locksweep_phase_i,
       timestamps_o         => timestamps_o,
       timestamps_ack_i     => timestamps_ack_i,
       abscal_txts_o        => open, --abscal_txts_o,
